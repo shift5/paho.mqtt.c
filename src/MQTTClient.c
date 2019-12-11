@@ -258,6 +258,14 @@ START_TIME_TYPE MQTTClient_start_clock(void)
 	clock_gettime(CLOCK_MONOTONIC, &start);
 	return start;
 }
+#elif defined(__APPLE__) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+#define START_TIME_TYPE struct timeval
+START_TIME_TYPE MQTTClient_start_clock(void)
+{
+	static struct timeval start;
+	gettimeofday(&start, NULL);
+	return start;
+}
 #else
 #define START_TIME_TYPE struct timeval
 START_TIME_TYPE MQTTClient_start_clock(void)
@@ -287,6 +295,15 @@ long MQTTClient_elapsed(struct timespec start)
 	clock_gettime(CLOCK_MONOTONIC, &now);
 	ntimersub(now, start, res);
 	return (res.tv_sec)*1000L + (res.tv_nsec)/1000000L;
+}
+#elif defined(__APPLE__) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+long MQTTClient_elapsed(struct timeval start)
+{
+	struct timeval now, res;
+
+	gettimeofday(&now, NULL);
+	timersub(&now, &start, &res);
+	return (res.tv_sec)*1000 + (res.tv_usec)/1000;
 }
 #else
 long MQTTClient_elapsed(struct timeval start)

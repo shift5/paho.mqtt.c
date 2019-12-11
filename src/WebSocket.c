@@ -28,6 +28,11 @@
 #include "MQTTProtocolOut.h"
 #include "StackTrace.h"
 
+#ifdef __MINGW32__
+#define htonll __builtin_bswap64
+#define ntohll __builtin_bswap64
+#endif
+
 #if defined(__linux__)
 #  include <endian.h>
 #elif defined(__APPLE__)
