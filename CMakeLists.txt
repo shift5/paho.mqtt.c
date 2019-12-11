@@ -37,7 +37,7 @@ STRING(TIMESTAMP BUILD_TIMESTAMP UTC)
 MESSAGE(STATUS "Timestamp is ${BUILD_TIMESTAMP}")
 
 IF(WIN32)
-  ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE -DWIN32_LEAN_AND_MEAN -MD)
+  ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE -DWIN32_LEAN_AND_MEAN)
 ELSEIF(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   ADD_DEFINITIONS(-DOSX)
 ENDIF()
@@ -59,34 +59,6 @@ ENDIF()
 
 IF(PAHO_BUILD_DOCUMENTATION)
     ADD_SUBDIRECTORY(doc)
-ENDIF()
-
-IF (PAHO_ENABLE_CPACK)
-       ### packaging settings
-       FILE(GLOB samples "src/samples/*.c")
-       INSTALL(FILES ${samples} DESTINATION samples)
-
-       SET(CPACK_PACKAGE_VENDOR "Eclipse Paho")
-       SET(CPACK_PACKAGE_NAME "Eclipse-Paho-MQTT-C")
-       INSTALL(FILES CONTRIBUTING.md epl-v10 edl-v10 README.md notice.html DESTINATION .)
-
-       IF (WIN32)
-               SET(CPACK_GENERATOR "ZIP")
-       ELSEIF(PAHO_BUILD_DEB_PACKAGE)
-               INSTALL(FILES CONTRIBUTING.md epl-v10 edl-v10 README.md notice.html DESTINATION .)
-
-               SET(CPACK_GENERATOR "DEB")
-               CONFIGURE_FILE(${CMAKE_SCRIPTS}/CPackDebConfig.cmake.in
-                       ${CMAKE_BINARY_DIR}/CPackDebConfig.cmake @ONLY)
-               SET(CPACK_PROJECT_CONFIG_FILE ${CMAKE_BINARY_DIR}/CPackDebConfig.cmake)
-               ADD_SUBDIRECTORY(debian)
-       ELSE()
-               SET(CPACK_GENERATOR "TGZ")
-       ENDIF()
-ELSE()
-       FILE(GLOB samples "src/samples/*.c")
-       INSTALL(FILES ${samples} DESTINATION ${CMAKE_INSTALL_DOCDIR})
-
 ENDIF()
 
 SET(CPACK_PACKAGE_VERSION_MAJOR ${PAHO_VERSION_MAJOR})
